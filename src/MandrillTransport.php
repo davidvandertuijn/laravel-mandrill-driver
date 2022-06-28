@@ -2,7 +2,6 @@
 
 namespace Davidvandertuijn\LaravelMandrillDriver;
 
-use App\Models\Mandrill\Log as MandrillLogModel;
 use Davidvandertuijn\LaravelMandrillDriver\App\Events\MandrillError;
 use Davidvandertuijn\LaravelMandrillDriver\App\Events\MandrillMessageSent;
 use Exception;
