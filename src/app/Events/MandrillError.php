@@ -1,6 +1,6 @@
 <?php
 
-namespace Davidvandertuijn\LaravelMandrillDriver\App\Events;
+namespace Davidvandertuijn\LaravelMandrillDriver\app\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
