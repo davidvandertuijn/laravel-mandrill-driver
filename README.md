@@ -48,7 +48,7 @@ The Event should be registered in the App\Providers\EventServiceProvider.php $li
 
 ```
 use App\Listeners\Mandrill\MessageSent as MandrillMessageSentListener;
-use Davidvandertuijn\LaravelMandrillDriver\Events\MandrillMessageSent as MandrillMessageSentEvent;
+use Davidvandertuijn\LaravelMandrillDriver\app\Events\MandrillMessageSent as MandrillMessageSentEvent;
 
 class EventServiceProvider extends ServiceProvider
 {
