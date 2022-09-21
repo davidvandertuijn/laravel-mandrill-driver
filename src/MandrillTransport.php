@@ -2,8 +2,8 @@
 
 namespace Davidvandertuijn\LaravelMandrillDriver;
 
-use Davidvandertuijn\LaravelMandrillDriver\App\Events\MandrillError;
-use Davidvandertuijn\LaravelMandrillDriver\App\Events\MandrillMessageSent;
+use Davidvandertuijn\LaravelMandrillDriver\app\Events\MandrillError;
+use Davidvandertuijn\LaravelMandrillDriver\app\Events\MandrillMessageSent;
 use Exception;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Support\Arr;
