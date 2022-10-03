@@ -45,6 +45,8 @@ class MandrillTransport extends AbstractTransport
     {
         $this->key = $key;
         $this->client = $client;
+        
+        parent::__construct();
     }
 
     /**
