@@ -6,12 +6,11 @@ use Davidvandertuijn\LaravelMandrillDriver\app\Events\MandrillError;
 use Davidvandertuijn\LaravelMandrillDriver\app\Events\MandrillMessageSent;
 use Exception;
 use GuzzleHttp\ClientInterface;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use Symfony\Component\Mailer\Envelope;
+use ReflectionException;
+use ReflectionObject;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
-use Symfony\Component\Mime\RawMessage;
 use Symfony\Component\Mime\Part\DataPart;
 
 class MandrillTransport extends AbstractTransport
@@ -19,33 +18,40 @@ class MandrillTransport extends AbstractTransport
     // Priority
 
     public const PRIORITY_HIGHEST = 1;
+
     public const PRIORITY_HIGH = 2;
+
     public const PRIORITY_NORMAL = 3;
+
     public const PRIORITY_LOW = 4;
+
     public const PRIORITY_LOWEST = 5;
 
     /**
      * Guzzle client instance.
+     *
      * @var ClientInterface
      */
     public $client;
 
     /**
      * The Mandrill API key.
+     *
      * @var string
      */
     public $key;
 
     /**
      * Create a new Mandrill transport instance.
-     * @param \GuzzleHttp\ClientInterface $client
-     * @param string $key
+     *
+     * @param  \GuzzleHttp\ClientInterface  $client
+     * @param  string  $key
      */
     public function __construct(ClientInterface $client, $key)
     {
         $this->key = $key;
         $this->client = $client;
-        
+
         parent::__construct();
     }
 
@@ -59,7 +65,8 @@ class MandrillTransport extends AbstractTransport
 
     /**
      * Do Send.
-     * @param SentMessage $message
+     *
+     * @param  SentMessage  $message
      */
     public function doSend(SentMessage $message): void
     {
@@ -68,7 +75,8 @@ class MandrillTransport extends AbstractTransport
 
     /**
      * Fetch To.
-     * @param SentMessage $sentMessage
+     *
+     * @param  SentMessage  $sentMessage
      * @return array
      */
     public function fetchTo(SentMessage $sentMessage): array
@@ -84,7 +92,7 @@ class MandrillTransport extends AbstractTransport
                 $a[] = [
                     'email' => $o->getAddress(),
                     'name' => $o->getName(),
-                    'type' => 'to'
+                    'type' => 'to',
                 ];
             }
         }
@@ -98,7 +106,7 @@ class MandrillTransport extends AbstractTransport
                 $a[] = [
                     'email' => $o->getAddress(),
                     'name' => $o->getName(),
-                    'type' => 'to'
+                    'type' => 'to',
                 ];
             }
         }
@@ -112,7 +120,7 @@ class MandrillTransport extends AbstractTransport
                 $a[] = [
                     'email' => $o->getAddress(),
                     'name' => $o->getName(),
-                    'type' => 'to'
+                    'type' => 'to',
                 ];
             }
         }
@@ -123,7 +131,8 @@ class MandrillTransport extends AbstractTransport
     /**
      * Get all the addresses this message should be sent to.
      * Note that Mandrill still respects CC, BCC headers in raw message itself.
-     * @param SentMessage $sentMessage
+     *
+     * @param  SentMessage  $sentMessage
      * @return array
      */
     public function getTo(SentMessage $sentMessage): array
@@ -147,8 +156,11 @@ class MandrillTransport extends AbstractTransport
 
     /**
      * Send Mandrill Request.
+     *
      * @see https://mandrillapp.com/api/docs/messages.curl.html
-     * @param SentMessage $sentMessage
+     *
+     * @param  SentMessage  $sentMessage
+     *
      * @throws Exception
      */
     public function sendMandrillRequest(SentMessage $sentMessage)
@@ -179,7 +191,7 @@ class MandrillTransport extends AbstractTransport
 
         if (in_array($sentMessage->getOriginalMessage()->getPriority(), [
             self::PRIORITY_HIGHEST,
-            self::PRIORITY_HIGH
+            self::PRIORITY_HIGH,
         ])) {
             $arguments['message']['important'] = true;
         }
@@ -194,7 +206,7 @@ class MandrillTransport extends AbstractTransport
             $attachments[] = [
                 'type' => $rawAttachment['type'],
                 'name' => $rawAttachment['filename'],
-                'content' => $rawAttachment['content']
+                'content' => $rawAttachment['content'],
             ];
         }
 
@@ -234,7 +246,8 @@ class MandrillTransport extends AbstractTransport
 
     /**
      * Fetch Attachments.
-     * @param SentMessage $sentMessage
+     *
+     * @param  SentMessage  $sentMessage
      * @return array $attachments
      */
     public function fetchAttachments(SentMessage $sentMessage): array
@@ -245,12 +258,33 @@ class MandrillTransport extends AbstractTransport
             if (get_class($attachment) === DataPart::class) {
                 $attachments[] = [
                     'content' => base64_encode($attachment->getBody()),
-                    'filename' => $attachment->getFilename(),
-                    'type' => $attachment->getContentType()
+                    'filename' => $this->getPrivateProperty($attachment, 'filename'),
+                    'type' => implode('/', [
+                        $attachment->getMediaType(),
+                        $attachment->getMediaSubtype(),
+                    ]),
                 ];
             }
         }
 
         return $attachments;
+    }
+
+    /**
+     * Get Private Property.
+     *
+     * @param $obj
+     * @param string $property
+     * @return mixed
+     *
+     * @throws ReflectionException
+     */
+    public function getPrivateProperty($obj, string $property)
+    {
+        $r = new ReflectionObject($obj);
+        $p = $r->getProperty($property);
+        $p->setAccessible(true);
+
+        return $p->getValue($obj);
     }
 }
