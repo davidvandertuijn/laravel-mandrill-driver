@@ -19,6 +19,10 @@
         }
     },
     "extra": {
+        "deprecation": {
+            "message": "This package is deprecated and will not be maintained.",
+            "since": "2.0"
+        },
         "laravel": {
             "providers": [
                 "Davidvandertuijn\\LaravelMandrillDriver\\MandrillServiceProvider"
