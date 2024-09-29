@@ -1,3 +1,6 @@
+# Deprecated
+This package is deprecated and will not be maintained.
+
 # Laravel Mandrill Driver
 
 <a href="https://packagist.org/packages/davidvandertuijn/laravel-mandrill-driver"><img src="https://poser.pugx.org/davidvandertuijn/laravel-mandrill-driver/d/total.svg" alt="Total Downloads"></a>
