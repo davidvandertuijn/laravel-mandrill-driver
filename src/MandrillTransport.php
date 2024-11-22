@@ -173,8 +173,8 @@ class MandrillTransport extends AbstractTransport
         $arguments['key'] = $this->key;
         $arguments['message']['html'] = $sentMessage->getOriginalMessage()->getHtmlBody();
         $arguments['message']['subject'] = $sentMessage->getOriginalMessage()->getSubject();
-        $arguments['message']['from_email'] = env('MAIL_FROM_ADDRESS');
-        $arguments['message']['from_name'] = env('MAIL_FROM_NAME') ?? 'Mandrill Mailer.';
+        $arguments['message']['from_email'] = Config::get('mandrill.from_email');
+        $arguments['message']['from_name'] = Config::get('mandrill.from_name');
         $arguments['message']['to'] = $this->fetchTo($sentMessage);
         $arguments['async'] = true;
 
